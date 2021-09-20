@@ -150,7 +150,7 @@ contract VoteDelegateTest is DSTest {
         gov = chief.GOV();
         iou = chief.IOU();
 
-        // Give us admin access to mint MKR
+        // Give us admin access to mint VDGT
         hevm.store(
             address(gov),
             bytes32(uint256(4)),
@@ -173,7 +173,7 @@ contract VoteDelegateTest is DSTest {
     }
 
     function test_proxy_lock_free() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -183,7 +183,7 @@ contract VoteDelegateTest is DSTest {
 
         delegate.doProxyLock(100 ether);
         assertEq(gov.balanceOf(address(delegate)), 0);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 100 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 100 ether);
         assertEq(iou.balanceOf(address(delegate)), 100 ether);
         assertEq(proxy.stake(address(delegate)), 100 ether);
 
@@ -193,13 +193,13 @@ contract VoteDelegateTest is DSTest {
 
         delegate.doProxyFree(100 ether);
         assertEq(gov.balanceOf(address(delegate)), 100 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegate)), 0);
         assertEq(proxy.stake(address(delegate)), 0);
     }
 
     function test_proxy_lock_free_after_expiration() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -209,7 +209,7 @@ contract VoteDelegateTest is DSTest {
 
         delegate.doProxyLock(100 ether);
         assertEq(gov.balanceOf(address(delegate)), 0);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 100 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 100 ether);
         assertEq(iou.balanceOf(address(delegate)), 100 ether);
         assertEq(proxy.stake(address(delegate)), 100 ether);
 
@@ -223,7 +223,7 @@ contract VoteDelegateTest is DSTest {
         // Always allow freeing after expiration
         delegate.doProxyFree(100 ether);
         assertEq(gov.balanceOf(address(delegate)), 100 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegate)), 0);
         assertEq(proxy.stake(address(delegate)), 0);
     }
@@ -244,7 +244,7 @@ contract VoteDelegateTest is DSTest {
     }
 
     function test_proxy_lock_free_around_expiration() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -279,7 +279,7 @@ contract VoteDelegateTest is DSTest {
         (ok,) = address(delegate).call(abi.encodeWithSignature("doProxyVotePoll(uint256[],uint256[])",ids,opts));
         assertTrue(ok);
         assertEq(gov.balanceOf(address(delegate)), 90 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10 ether);
         assertEq(iou.balanceOf(address(delegate)), 10 ether);
         assertEq(proxy.stake(address(delegate)), 10 ether);
 
@@ -296,7 +296,7 @@ contract VoteDelegateTest is DSTest {
         assertTrue(!ok);
 
         assertEq(gov.balanceOf(address(delegate)), 90 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10 ether);
         assertEq(iou.balanceOf(address(delegate)), 10 ether);
         assertEq(proxy.stake(address(delegate)), 10 ether);
 
@@ -313,7 +313,7 @@ contract VoteDelegateTest is DSTest {
         assertTrue(!ok);
 
         assertEq(gov.balanceOf(address(delegate)), 90 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10 ether);
         assertEq(iou.balanceOf(address(delegate)), 10 ether);
         assertEq(proxy.stake(address(delegate)), 10 ether);
 
@@ -322,20 +322,20 @@ contract VoteDelegateTest is DSTest {
         // Always allow freeing after expiration
         delegate.doProxyFree(10 ether);
         assertEq(gov.balanceOf(address(delegate)), 100 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegate)), 0);
         assertEq(proxy.stake(address(delegate)), 0);
     }
 
     function test_delegator_lock_free() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegator1.approveGov(address(proxy));
         delegator1.approveIou(address(proxy));
 
         delegator1.doProxyLock(10_000 ether);
         assertEq(gov.balanceOf(address(delegator1)), 0);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10_000 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10_000 ether);
         assertEq(iou.balanceOf(address(delegator1)), 10_000 ether);
         assertEq(proxy.stake(address(delegator1)), 10_000 ether);
 
@@ -344,14 +344,14 @@ contract VoteDelegateTest is DSTest {
 
         delegator1.doProxyFree(10_000 ether);
         assertEq(gov.balanceOf(address(delegator1)), 10_000 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegator1)), 0);
         assertEq(proxy.stake(address(delegator1)), 0);
     }
 
     function test_delegator_lock_free_fuzz(uint256 wad_seed) public {
         uint256 wad = wad_seed < 1 ether ?  wad_seed += 1 ether : wad_seed % 20_000 ether;
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegator2.approveGov(address(proxy));
         delegator2.approveIou(address(proxy));
@@ -360,7 +360,7 @@ contract VoteDelegateTest is DSTest {
 
         delegator2.doProxyLock(wad);
         assertEq(gov.balanceOf(address(delegator2)), delGovBalance - wad);
-        assertEq(gov.balanceOf(address(chief)), currMKR + wad);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + wad);
         assertEq(iou.balanceOf(address(delegator2)), wad);
         assertEq(proxy.stake(address(delegator2)), wad);
 
@@ -369,20 +369,20 @@ contract VoteDelegateTest is DSTest {
 
         delegator2.doProxyFree(wad);
         assertEq(gov.balanceOf(address(delegator2)), delGovBalance);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegator2)), 0);
         assertEq(proxy.stake(address(delegator2)), 0);
     }
 
     function test_delegator_lock_free_after_expiration() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegator1.approveGov(address(proxy));
         delegator1.approveIou(address(proxy));
 
         delegator1.doProxyLock(10_000 ether);
         assertEq(gov.balanceOf(address(delegator1)), 0);
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10_000 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10_000 ether);
         assertEq(iou.balanceOf(address(delegator1)), 10_000 ether);
         assertEq(proxy.stake(address(delegator1)), 10_000 ether);
 
@@ -395,13 +395,13 @@ contract VoteDelegateTest is DSTest {
         // Always allow freeing after expiration.
         delegator1.doProxyFree(10_000 ether);
         assertEq(gov.balanceOf(address(delegator1)), 10_000 ether);
-        assertEq(gov.balanceOf(address(chief)), currMKR);
+        assertEq(gov.balanceOf(address(chief)), currVDGT);
         assertEq(iou.balanceOf(address(delegator1)), 0);
         assertEq(proxy.stake(address(delegator1)), 0);
     }
 
     function test_delegate_voting() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -411,7 +411,7 @@ contract VoteDelegateTest is DSTest {
         delegate.doProxyLock(100 ether);
         delegator1.doProxyLock(10_000 ether);
 
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10_100 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10_100 ether);
 
         address[] memory yays = new address[](1);
         yays[0] = c1;
@@ -443,7 +443,7 @@ contract VoteDelegateTest is DSTest {
 
 
     function testFail_delegate_voting_after_expiration() public {
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -453,7 +453,7 @@ contract VoteDelegateTest is DSTest {
         delegate.doProxyLock(100 ether);
         delegator1.doProxyLock(10_000 ether);
 
-        assertEq(gov.balanceOf(address(chief)), currMKR + 10_100 ether);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + 10_100 ether);
 
         address[] memory yays = new address[](1);
         yays[0] = c1;
@@ -471,7 +471,7 @@ contract VoteDelegateTest is DSTest {
     function test_delegate_voting_fuzz(uint256 wad_seed, uint256 wad2_seed) public {
         uint256 wad = wad_seed < 1 ether ?  wad_seed += 1 ether : wad_seed % 100 ether;
         uint256 wad2 = wad2_seed < 1 ether ?  wad2_seed += 1 ether : wad2_seed % 20_000 ether;
-        uint256 currMKR = gov.balanceOf(address(chief));
+        uint256 currVDGT = gov.balanceOf(address(chief));
 
         delegate.approveGov(address(proxy));
         delegate.approveIou(address(proxy));
@@ -490,7 +490,7 @@ contract VoteDelegateTest is DSTest {
         assertEq(iou.balanceOf(address(delegator2)), wad2);
         assertEq(proxy.stake(address(delegate)), wad);
         assertEq(proxy.stake(address(delegator2)), wad2);
-        assertEq(gov.balanceOf(address(chief)), currMKR + wad + wad2);
+        assertEq(gov.balanceOf(address(chief)), currVDGT + wad + wad2);
 
         address[] memory yays = new address[](1);
         yays[0] = c1;
@@ -514,7 +514,7 @@ contract VoteDelegateTest is DSTest {
         delegate.doProxyLock(100 ether);
         delegator1.doProxyLock(10_000 ether);
 
-        // Attempting to steal more MKR than you put in
+        // Attempting to steal more VDGT than you put in
         delegate.doProxyFree(101 ether);
     }
 
